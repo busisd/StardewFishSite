@@ -1,0 +1,7 @@
+.stardew-fish-tile {
+  cursor: pointer;
+}
+
+.stardew-fish-tile:hover {
+  background-color: rgba(180,180,230,.4);
+}
