@@ -1,0 +1,9 @@
+.modal-fish-image {
+  border-image: url("./StardewFishModalBorder.png") 15;
+  border-width: 15px;
+  padding: 5px;
+  border-style: solid;
+
+  width: 96px;
+  height: 96px;
+}

@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-items-per-row), 1fr);
 
-  width: var(--grid-width);
+  width: min(var(--grid-width), 100%);
 }
 
 .grid-item-wrapper {

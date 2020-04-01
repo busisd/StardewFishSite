@@ -1,5 +1,5 @@
 import React from "react";
-import './SquareGrid.css';
+import "./SquareGrid.css";
 
 const addGridContentClassName = (classNames, additionalClassNames) =>
   `${classNames ? classNames + " " : ""}${
@@ -13,13 +13,18 @@ const addStyles = (childStyle, additionalStyle) => ({
 
 const gridItemWrap = (child, additionalProps = {}, index) =>
   React.isValidElement(child) ? (
-    <div className="grid-item-wrapper" key={child.props.uniqueKey ? `${child.props.uniqueKey}_grid_wrapper` : index}>
+    <div
+      className="grid-item-wrapper"
+      key={
+        child.props.uniqueKey ? `${child.props.uniqueKey}_grid_wrapper` : index
+      }
+    >
       {React.cloneElement(child, {
         ...additionalProps,
         ...child.props,
         style: addStyles(child.props.style, additionalProps.style),
         className: addGridContentClassName(
-          child.className,
+          child.props.className,
           additionalProps.className
         )
       })}
@@ -35,12 +40,14 @@ const gridItemWrap = (child, additionalProps = {}, index) =>
     </div>
   );
 
-const convertToArray = item => item ? [].concat(item) : [];
+const convertToArray = item => (item ? [].concat(item) : []);
 
-function SquareGrid({ children, childProps }) {
+function SquareGrid({ children, childProps, ...rest }) {
   return (
-    <div className="square-grid">
-      {convertToArray(children).map((child, index) => gridItemWrap(child, childProps, index))}
+    <div className="square-grid" {...rest}>
+      {convertToArray(children).map((child, index) =>
+        gridItemWrap(child, childProps, index)
+      )}
     </div>
   );
 }

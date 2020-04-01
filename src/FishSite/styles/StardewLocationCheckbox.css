@@ -1,0 +1,23 @@
+.location-checkbox {
+  text-align: center;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  font-size: .85vw;
+}
+
+@media (max-width: 6in) {
+  .location-checkbox {
+    font-size: 3vw;
+  }
+}
+
+.unchecked {
+  background-color: white;
+  border: 1px solid grey;
+}
+
+.checked {
+  background-color: yellowgreen;
+  border: 2px solid black;
+}
+

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 // import App from './App';
 import * as serviceWorker from './serviceWorker';
-import FishSiteContainer from './FishSite/FishSiteContainer';
+import FishSiteContainer from './FishSite/components/FishSiteContainer';
 
 ReactDOM.render(
   <React.StrictMode>

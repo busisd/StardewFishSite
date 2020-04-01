@@ -1,0 +1,10 @@
+.modal-fish-prices {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.modal-fish-prices,
+.modal-fish-prices td,
+.modal-fish-prices tr {
+  border: 1px solid black;
+}
