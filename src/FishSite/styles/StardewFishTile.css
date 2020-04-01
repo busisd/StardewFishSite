@@ -5,3 +5,8 @@
 .stardew-fish-tile:hover {
   background-color: rgba(180,180,230,.4);
 }
+
+.fish-tile-checked {
+  background-color: lightgreen;
+  border: 1px solid darkgreen;
+}

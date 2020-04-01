@@ -6,7 +6,11 @@ import FishData from "../FishData2";
 import StardewFishTile from "./StardewFishTile";
 import SquareGrid from "../../SquareGrid/SquareGrid";
 import SelectGrid from "../../SquareGrid/SelectGrid";
-import { selectGridLocations, selectGridSeasons, selectGridWeather } from "./SelectGridItems";
+import {
+  selectGridLocations,
+  selectGridSeasons,
+  selectGridWeather
+} from "./SelectGridItems";
 
 function containsTrue(obj) {
   for (let entry of Object.entries(obj)) {
@@ -49,19 +53,24 @@ const filterFish = (
   fishSearch,
   locationState,
   weatherState,
-  seasonState
+  seasonState,
+  checkedFish,
+  hideCheckedState
 ) =>
   fishEntry.name.toLowerCase().includes(fishSearch.toLowerCase()) &&
   (!containsTrue(locationState) ||
     checkAllLocations(fishEntry, locationState)) &&
   (!containsTrue(weatherState) || checkAllFields(fishEntry, weatherState)) &&
-  (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState));
+  (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState)) && 
+  (!hideCheckedState.shouldHide || !checkedFish[fishEntry.name]);
 
 const FishSiteContainer = () => {
   const [fishSearch, setFishSearch] = useState("");
   const [locationState, setLocationState] = useState({});
   const [weatherState, setWeatherState] = useState({});
   const [seasonState, setSeasonState] = useState({});
+  const [checkedFish, setCheckedFish] = useState({});
+  const [hideCheckedState, setHideCheckedState] = useState({});
 
   return (
     <div className="three-col-container">
@@ -73,11 +82,15 @@ const FishSiteContainer = () => {
               fishSearch,
               locationState,
               weatherState,
-              seasonState
+              seasonState,
+              checkedFish,
+              hideCheckedState
             )
           ).map(fishEntry => (
             <StardewFishTile
               fishEntry={fishEntry}
+              isChecked={Boolean(checkedFish[fishEntry.name])}
+              setCheckedFish={setCheckedFish}
               uniqueKey={fishEntry.name}
               key={fishEntry.name}
             />
@@ -104,17 +117,29 @@ const FishSiteContainer = () => {
           selectState={seasonState}
           setSelectState={setSeasonState}
         />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={[
+            {
+              name: "shouldHide",
+              checked: (
+                <div className="location-checkbox checked">
+                  Hide checked fish
+                </div>
+              ),
+              unchecked: (
+                <div className="location-checkbox unchecked">
+                  Hide checked fish
+                </div>
+              )
+            }
+          ]}
+          selectState={hideCheckedState}
+          setSelectState={setHideCheckedState}
+        />
       </div>
     </div>
   );
 };
-
-const FishSiteContainer2 = () => (
-  <div className="three-col-container">
-    <div className="three-col-left" style={{ backgroundColor: "red" }}></div>
-    <div className="three-col-center" style={{ backgroundColor: "blue" }}></div>
-    <div className="three-col-right" style={{ backgroundColor: "green" }}></div>
-  </div>
-);
 
 export default FishSiteContainer;
