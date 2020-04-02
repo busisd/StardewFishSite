@@ -3,7 +3,7 @@ import "../styles/StardewFishTile.css";
 import StardewFishModal from "./StardewFishModal";
 import StardewFishImage from "./StardewFishImage";
 
-function StardewFishTile({ fishEntry, isChecked, setCheckedFish }) {
+function StardewFishTile({ fishEntry, isChecked, setCheckedFish, checkMode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -16,7 +16,7 @@ function StardewFishTile({ fishEntry, isChecked, setCheckedFish }) {
             : "grid-item-content stardew-fish-tile"
         }
         onClick={e => {
-          if (e.ctrlKey) {
+          if (e.ctrlKey || checkMode) {
             setCheckedFish(oldVal => ({
               ...oldVal,
               [fishEntry.name]: !isChecked

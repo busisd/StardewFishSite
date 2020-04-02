@@ -1,0 +1,19 @@
+.location-filter {
+  background-color: rgb(100,230,180);
+}
+
+.season-filter {
+  background-color: lightsalmon;
+}
+
+.weather-filter {
+  background-color: lightsteelblue;
+}
+
+.bundle-filter {
+  background-color: lightpink;
+}
+
+.checkbox-filter {
+  background-color: lightgoldenrodyellow;
+}

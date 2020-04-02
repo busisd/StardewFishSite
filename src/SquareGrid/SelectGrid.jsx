@@ -13,6 +13,7 @@ const toggleState = (setSelectState, item_name, newValue) => {
     name: [key of item in selectState]
     checked: [something renderable to go in the grid]
     unchecked: [something renderable to go in the grid]
+    (optional) onClick: [a custom click handler function]
   }
 */
 const SelectGrid = ({ selectState, setSelectState, items, ...rest }) => (
@@ -21,12 +22,12 @@ const SelectGrid = ({ selectState, setSelectState, items, ...rest }) => (
       selectState[item.name]
         ? React.cloneElement(item.checked, {
             ...item.props,
-            onClick: () => toggleState(setSelectState, item.name, false),
+            onClick: item.onClick || (() => toggleState(setSelectState, item.name, false)),
             key: item.name
           })
         : React.cloneElement(item.unchecked, {
             ...item.props,
-            onClick: () => toggleState(setSelectState, item.name, true),
+            onClick: item.onClick || (() => toggleState(setSelectState, item.name, true)),
             key: item.name
           })
     )}

@@ -101,16 +101,6 @@ const selectGridSeasons = [
   }
 ];
 
-const hideCheckedItems = [
-  {
-    name: "shouldHide",
-    checked: <div className="location-checkbox checked">Hide checked fish</div>,
-    unchecked: (
-      <div className="location-checkbox unchecked">Hide checked fish</div>
-    )
-  }
-];
-
 const selectGridBundles = [
   makeSelectGridItem("River Fish Bundle"),
   makeSelectGridItem("Lake Fish Bundle"),
@@ -120,10 +110,56 @@ const selectGridBundles = [
   makeSelectGridItem("Field Research Bundle")
 ];
 
+const makeSelectGridCheck = (
+  setCheckedFish,
+  setSearch,
+  setCheckState,
+  statesToClear
+) => [
+  {
+    name: "checkMode",
+    checked: (
+      <div className="location-checkbox unchecked">Click fish to check</div>
+    ),
+    unchecked: (
+      <div className="location-checkbox unchecked">Click fish for details</div>
+    )
+  },
+  {
+    name: "shouldHide",
+    checked: <div className="location-checkbox checked">Hide checked fish</div>,
+    unchecked: (
+      <div className="location-checkbox unchecked">Hide checked fish</div>
+    )
+  },
+  {
+    name: "clearChecked",
+    checked: (
+      <div className="location-checkbox checked">Clear checked fish</div>
+    ),
+    unchecked: (
+      <div className="location-checkbox unchecked">Clear checked fish</div>
+    ),
+    onClick: () => {
+      setCheckedFish({});
+    }
+  },
+  {
+    name: "clearFilters",
+    checked: <div className="location-checkbox checked">Clear filters</div>,
+    unchecked: <div className="location-checkbox unchecked">Clear filters</div>,
+    onClick: () => {
+      setSearch("");
+      setCheckState(state => ({...state, shouldHide: false}));
+      statesToClear.forEach(setState => setState({}));
+    }
+  }
+];
+
 export {
   selectGridLocations,
   selectGridSeasons,
   selectGridWeather,
-  hideCheckedItems,
-  selectGridBundles
+  selectGridBundles,
+  makeSelectGridCheck
 };

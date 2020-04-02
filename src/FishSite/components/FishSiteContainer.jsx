@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/FishSiteContainer.css";
+import "../styles/FishSiteSelectGrids.css";
 import "../styles/StardewLocationCheckbox.css";
 import "../../ThreeColumnContainer/ThreeColumnContainer.css";
 import FishData from "../FishData2";
@@ -10,8 +11,8 @@ import {
   selectGridLocations,
   selectGridSeasons,
   selectGridWeather,
-  hideCheckedItems,
-  selectGridBundles
+  selectGridBundles,
+  makeSelectGridCheck
 } from "./SelectGridItems";
 import useLocalStorage from "../../LocalStorageHook/useLocalStorage";
 
@@ -53,7 +54,7 @@ function checkAllLocations(fishEntry, locationsObj) {
 
 function checkAllBundles(fishEntry, bundlesObj) {
   for (let field of Object.entries(bundlesObj)) {
-    if (field[1] && fishEntry.bundle == field[0]) return true;
+    if (field[1] && fishEntry.bundle === field[0]) return true;
   }
   return false;
 }
@@ -66,7 +67,7 @@ const filterFish = (
   seasonState,
   bundleState,
   checkedFish,
-  hideCheckedState
+  shouldHide
 ) =>
   fishEntry.name.toLowerCase().includes(fishSearch.toLowerCase()) &&
   (!containsTrue(locationState) ||
@@ -74,7 +75,7 @@ const filterFish = (
   (!containsTrue(weatherState) || checkAllFields(fishEntry, weatherState)) &&
   (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState)) &&
   (!containsTrue(bundleState) || checkAllBundles(fishEntry, bundleState)) &&
-  (!hideCheckedState.shouldHide || !checkedFish[fishEntry.name]);
+  (!shouldHide || !checkedFish[fishEntry.name]);
 
 const FishSiteContainer = () => {
   const [fishSearch, setFishSearch] = useState("");
@@ -83,44 +84,56 @@ const FishSiteContainer = () => {
   const [seasonState, setSeasonState] = useState({});
   const [bundleState, setBundleState] = useState({});
   const [checkedFish, setCheckedFish] = useLocalStorage("checkedFish", {});
-  const [hideCheckedState, setHideCheckedState] = useState({});
+  const [checkState, setCheckState] = useState({});
 
   return (
     <div className="three-col-container">
       <div className="three-col-left">
         <input
+          value={fishSearch}
           onChange={e => setFishSearch(e.target.value)}
           placeholder="Search for fish"
         />
+        <button onClick={() => setFishSearch("")}>Clear search</button>
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={selectGridLocations}
           selectState={locationState}
           setSelectState={setLocationState}
+          childProps={{ className: "location-filter" }}
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={selectGridWeather}
           selectState={weatherState}
           setSelectState={setWeatherState}
+          childProps={{ className: "weather-filter" }}
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={selectGridSeasons}
           selectState={seasonState}
           setSelectState={setSeasonState}
+          childProps={{ className: "season-filter" }}
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={selectGridBundles}
           selectState={bundleState}
           setSelectState={setBundleState}
+          childProps={{ className: "bundle-filter" }}
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
-          items={hideCheckedItems}
-          selectState={hideCheckedState}
-          setSelectState={setHideCheckedState}
+          items={makeSelectGridCheck(
+            setCheckedFish,
+            setFishSearch,
+            setCheckState,
+            [setLocationState, setWeatherState, setSeasonState, setBundleState]
+          )}
+          selectState={checkState}
+          setSelectState={setCheckState}
+          childProps={{ className: "checkbox-filter" }}
         />
       </div>
       <div className="three-col-center three-col-align-center">
@@ -134,13 +147,14 @@ const FishSiteContainer = () => {
               seasonState,
               bundleState,
               checkedFish,
-              hideCheckedState
+              checkState.shouldHide
             )
           ).map(fishEntry => (
             <StardewFishTile
               fishEntry={fishEntry}
               isChecked={Boolean(checkedFish[fishEntry.name])}
               setCheckedFish={setCheckedFish}
+              checkMode={checkState.checkMode}
               uniqueKey={fishEntry.name}
               key={fishEntry.name}
             />
@@ -154,7 +168,8 @@ const FishSiteContainer = () => {
         <br />
         <br />
         <span>
-          Use <kbd>ctrl</kbd>+<kbd>click</kbd> to check off a fish
+          Use <kbd>ctrl</kbd>+<kbd>click</kbd> to check off a fish, or use fish
+          check mode
         </span>
         <br />
         <span>Checked fish will be saved between visits</span>
