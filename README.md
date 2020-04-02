@@ -4,7 +4,7 @@ All React components and hooks are custom-made.
 
 Works for desktop and mobile browsers.
 
-Project includes images that are assets of ConcernedApe LLC.
+Project uses images that are assets of ConcernedApe LLC.
 
 ![Filters in action](https://raw.githubusercontent.com/busisd/StardewFishSite/master/FishSite.png)
 
