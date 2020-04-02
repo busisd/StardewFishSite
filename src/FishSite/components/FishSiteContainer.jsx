@@ -86,6 +86,19 @@ const FishSiteContainer = () => {
   const [checkedFish, setCheckedFish] = useLocalStorage("checkedFish", {});
   const [checkState, setCheckState] = useState({});
 
+  const filteredFishEntries = FishData.filter(fishEntry =>
+    filterFish(
+      fishEntry,
+      fishSearch,
+      locationState,
+      weatherState,
+      seasonState,
+      bundleState,
+      checkedFish,
+      checkState.shouldHide
+    )
+  );
+
   return (
     <div className="three-col-container">
       <div className="three-col-left">
@@ -138,18 +151,7 @@ const FishSiteContainer = () => {
       </div>
       <div className="three-col-center three-col-align-center">
         <SquareGrid childProps={{}}>
-          {FishData.filter(fishEntry =>
-            filterFish(
-              fishEntry,
-              fishSearch,
-              locationState,
-              weatherState,
-              seasonState,
-              bundleState,
-              checkedFish,
-              checkState.shouldHide
-            )
-          ).map(fishEntry => (
+          {filteredFishEntries.map(fishEntry => (
             <StardewFishTile
               fishEntry={fishEntry}
               isChecked={Boolean(checkedFish[fishEntry.name])}
@@ -173,6 +175,17 @@ const FishSiteContainer = () => {
         </span>
         <br />
         <span>Checked fish will be saved between visits</span>
+        <br />
+        <br />
+        <span>
+          Expected profit per catch (ignoring quality and fish rarity):{" "}
+          {(
+            filteredFishEntries
+              .map(entry => entry.price_normal)
+              .reduce((total, newPrice) => total + newPrice) /
+            filteredFishEntries.length
+          ).toFixed(2)}
+        </span>
       </div>
     </div>
   );
