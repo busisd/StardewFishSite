@@ -12,7 +12,8 @@ import {
   selectGridSeasons,
   selectGridWeather,
   selectGridBundles,
-  makeSelectGridCheck
+  makeSelectGridCheck,
+  selectGridLegendary
 } from "./SelectGridItems";
 import useLocalStorage from "../../LocalStorageHook/useLocalStorage";
 
@@ -59,6 +60,42 @@ function checkAllBundles(fishEntry, bundlesObj) {
   return false;
 }
 
+function checkOnlySunny(fishEntry) {
+  for (let opportunity of fishEntry.catch_opportunities) {
+    if (opportunity.sunny && !opportunity.rainy) return true;
+  }
+  return false;
+}
+
+function checkOnlyRainy(fishEntry) {
+  for (let opportunity of fishEntry.catch_opportunities) {
+    if (opportunity.rainy && !opportunity.sunny) return true;
+  }
+  return false;
+}
+
+function checkWeather(fishEntry, weatherState) {
+  if (weatherState.sunny || weatherState.rainy) {
+    return checkAllFields(fishEntry, {
+      sunny: weatherState.sunny,
+      rainy: weatherState.rainy
+    });
+  } else if (weatherState.onlySunny) {
+    return checkOnlySunny(fishEntry);
+  } else if (weatherState.onlyRainy) {
+    return checkOnlyRainy(fishEntry);
+  } else {
+    return true;
+  }
+}
+
+function checkLegendary(fishEntry, legendaryState) {
+  if (Boolean(legendaryState.common) === Boolean(legendaryState.legendary))
+    return true;
+  else if (legendaryState.common) return !fishEntry.legendary;
+  else return fishEntry.legendary;
+}
+
 const filterFish = (
   fishEntry,
   fishSearch,
@@ -67,15 +104,17 @@ const filterFish = (
   seasonState,
   bundleState,
   checkedFish,
-  shouldHide
+  shouldHide,
+  legendaryState
 ) =>
   fishEntry.name.toLowerCase().includes(fishSearch.toLowerCase()) &&
   (!containsTrue(locationState) ||
     checkAllLocations(fishEntry, locationState)) &&
-  (!containsTrue(weatherState) || checkAllFields(fishEntry, weatherState)) &&
+  checkWeather(fishEntry, weatherState) &&
   (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState)) &&
   (!containsTrue(bundleState) || checkAllBundles(fishEntry, bundleState)) &&
-  (!shouldHide || !checkedFish[fishEntry.name]);
+  (!shouldHide || !checkedFish[fishEntry.name]) &&
+  checkLegendary(fishEntry, legendaryState);
 
 const FishSiteContainer = () => {
   const [fishSearch, setFishSearch] = useState("");
@@ -85,6 +124,7 @@ const FishSiteContainer = () => {
   const [bundleState, setBundleState] = useState({});
   const [checkedFish, setCheckedFish] = useLocalStorage("checkedFish", {});
   const [checkState, setCheckState] = useState({});
+  const [legendaryState, setLegendaryState] = useState({});
 
   const filteredFishEntries = FishData.filter(fishEntry =>
     filterFish(
@@ -95,8 +135,12 @@ const FishSiteContainer = () => {
       seasonState,
       bundleState,
       checkedFish,
-      checkState.shouldHide
+      checkState.shouldHide,
+      legendaryState
     )
+  );
+  const filteredCommonFishEntries = filteredFishEntries.filter(
+    fishEntry => !fishEntry.legendary
   );
 
   return (
@@ -121,6 +165,7 @@ const FishSiteContainer = () => {
           selectState={weatherState}
           setSelectState={setWeatherState}
           childProps={{ className: "weather-filter" }}
+          gridMultiSelect={false}
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
@@ -138,11 +183,19 @@ const FishSiteContainer = () => {
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={selectGridLegendary}
+          selectState={legendaryState}
+          setSelectState={setLegendaryState}
+          childProps={{ className: "legendary-filter" }}
+          gridMultiSelect={false}
+        />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={makeSelectGridCheck(
             setCheckedFish,
             setFishSearch,
             setCheckState,
-            [setLocationState, setWeatherState, setSeasonState, setBundleState]
+            [setLocationState, setWeatherState, setSeasonState, setBundleState, setLegendaryState]
           )}
           selectState={checkState}
           setSelectState={setCheckState}
@@ -179,12 +232,26 @@ const FishSiteContainer = () => {
         <br />
         <span>
           Expected profit per catch (ignoring quality and fish rarity):{" "}
-          {(
-            filteredFishEntries
-              .map(entry => entry.price_normal)
-              .reduce((total, newPrice) => total + newPrice) /
-            filteredFishEntries.length
-          ).toFixed(2)}
+          {filteredFishEntries.length > 0
+            ? (
+                filteredFishEntries
+                  .map(entry => entry.price_normal)
+                  .reduce((total, newPrice) => total + newPrice) /
+                filteredFishEntries.length
+              ).toFixed(2)
+            : "N/A"}
+        </span>
+        <br />
+        <span>
+          Expected profit per catch, ignoring legendary fish:{" "}
+          {filteredCommonFishEntries.length > 0
+            ? (
+                filteredCommonFishEntries
+                  .map(entry => entry.price_normal)
+                  .reduce((total, newPrice) => total + newPrice) /
+                filteredCommonFishEntries.length
+              ).toFixed(2)
+            : "N/A"}
         </span>
       </div>
     </div>

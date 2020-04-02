@@ -1,12 +1,22 @@
 import React from "react";
 import SquareGrid from "./SquareGrid";
 
-const toggleState = (setSelectState, item_name, newValue) => {
+const toggleStateMultiSelect = (setSelectState, itemName, newValue) => {
   setSelectState(oldSelectState => ({
     ...oldSelectState,
-    [item_name]: newValue
+    [itemName]: newValue
   }));
 };
+
+const toggleStateSingleSelect = (setSelectState, itemName, newValue) => {
+  setSelectState({
+    [itemName]: newValue
+  });
+};
+
+const makeClickHandler = (gridMultiSelect, setSelectState, itemName, newValue) => 
+  gridMultiSelect ? () => toggleStateMultiSelect(setSelectState, itemName, newValue) : 
+  () => toggleStateSingleSelect(setSelectState, itemName, newValue)
 
 /*  Each item should be in the form:
   {
@@ -16,18 +26,18 @@ const toggleState = (setSelectState, item_name, newValue) => {
     (optional) onClick: [a custom click handler function]
   }
 */
-const SelectGrid = ({ selectState, setSelectState, items, ...rest }) => (
+const SelectGrid = ({ selectState, setSelectState, gridMultiSelect=true, items, ...rest }) => (
   <SquareGrid {...rest}>
     {items.map(item =>
       selectState[item.name]
         ? React.cloneElement(item.checked, {
             ...item.props,
-            onClick: item.onClick || (() => toggleState(setSelectState, item.name, false)),
+            onClick: item.onClick || makeClickHandler(gridMultiSelect, setSelectState, item.name, false),
             key: item.name
           })
         : React.cloneElement(item.unchecked, {
             ...item.props,
-            onClick: item.onClick || (() => toggleState(setSelectState, item.name, true)),
+            onClick: item.onClick || makeClickHandler(gridMultiSelect, setSelectState, item.name, true),
             key: item.name
           })
     )}
