@@ -9,8 +9,10 @@ import SelectGrid from "../../SquareGrid/SelectGrid";
 import {
   selectGridLocations,
   selectGridSeasons,
-  selectGridWeather
+  selectGridWeather,
+  hideCheckedItems
 } from "./SelectGridItems";
+import useLocalStorage from "../LocalStorageHook/useLocalStorage";
 
 function containsTrue(obj) {
   for (let entry of Object.entries(obj)) {
@@ -69,11 +71,38 @@ const FishSiteContainer = () => {
   const [locationState, setLocationState] = useState({});
   const [weatherState, setWeatherState] = useState({});
   const [seasonState, setSeasonState] = useState({});
-  const [checkedFish, setCheckedFish] = useState({});
+  const [checkedFish, setCheckedFish] = useLocalStorage("checkedFish", {});
   const [hideCheckedState, setHideCheckedState] = useState({});
 
   return (
     <div className="three-col-container">
+      <div className="three-col-left">
+        <input onChange={e => setFishSearch(e.target.value)} />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={selectGridLocations}
+          selectState={locationState}
+          setSelectState={setLocationState}
+        />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={selectGridWeather}
+          selectState={weatherState}
+          setSelectState={setWeatherState}
+        />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={selectGridSeasons}
+          selectState={seasonState}
+          setSelectState={setSeasonState}
+        />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={hideCheckedItems}
+          selectState={hideCheckedState}
+          setSelectState={setHideCheckedState}
+        />
+      </div>
       <div className="three-col-center three-col-align-center">
         <SquareGrid childProps={{}}>
           {FishData.filter(fishEntry =>
@@ -97,46 +126,10 @@ const FishSiteContainer = () => {
           ))}
         </SquareGrid>
       </div>
-      <div className="three-col-left">
-        <input onChange={e => setFishSearch(e.target.value)} />
-        <SelectGrid
-          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
-          items={selectGridLocations}
-          selectState={locationState}
-          setSelectState={setLocationState}
-        />
-        <SelectGrid
-          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
-          items={selectGridWeather}
-          selectState={weatherState}
-          setSelectState={setWeatherState}
-        />
-        <SelectGrid
-          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
-          items={selectGridSeasons}
-          selectState={seasonState}
-          setSelectState={setSeasonState}
-        />
-        <SelectGrid
-          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
-          items={[
-            {
-              name: "shouldHide",
-              checked: (
-                <div className="location-checkbox checked">
-                  Hide checked fish
-                </div>
-              ),
-              unchecked: (
-                <div className="location-checkbox unchecked">
-                  Hide checked fish
-                </div>
-              )
-            }
-          ]}
-          selectState={hideCheckedState}
-          setSelectState={setHideCheckedState}
-        />
+      <div className="three-col-right">
+        <span>Use <kbd>ctrl</kbd>+<kbd>click</kbd> to check off a fish</span>
+        <br />
+        <span>Checked fish will be saved between visits</span>
       </div>
     </div>
   );

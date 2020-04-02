@@ -91,4 +91,20 @@ const selectGridSeasons = [
   }
 ];
 
-export { selectGridLocations, selectGridSeasons, selectGridWeather };
+const hideCheckedItems = [
+  {
+    name: "shouldHide",
+    checked: (
+      <div className="location-checkbox checked">
+        Hide checked fish
+      </div>
+    ),
+    unchecked: (
+      <div className="location-checkbox unchecked">
+        Hide checked fish
+      </div>
+    )
+  }
+]
+
+export { selectGridLocations, selectGridSeasons, selectGridWeather, hideCheckedItems };
