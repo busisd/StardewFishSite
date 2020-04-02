@@ -2,6 +2,8 @@ A single-page React app that filters, tracks, and displays information about Sta
 
 All React components and hooks are custom-made. 
 
+Works for desktop and mobile browsers.
+
 ![Filters in action](https://raw.githubusercontent.com/busisd/StardewFishSite/master/FishSite.png)
 
 ![Fish details](https://raw.githubusercontent.com/busisd/StardewFishSite/master/FishSiteModal.png)
