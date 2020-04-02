@@ -1,5 +1,15 @@
 import React from "react";
 
+const makeSelectGridItem = (name, displayName) => ({
+  name,
+  checked: (
+    <div className="location-checkbox checked">{displayName || name}</div>
+  ),
+  unchecked: (
+    <div className="location-checkbox unchecked">{displayName || name}</div>
+  )
+});
+
 const selectGridLocations = [
   {
     name: "Ocean",
@@ -94,17 +104,26 @@ const selectGridSeasons = [
 const hideCheckedItems = [
   {
     name: "shouldHide",
-    checked: (
-      <div className="location-checkbox checked">
-        Hide checked fish
-      </div>
-    ),
+    checked: <div className="location-checkbox checked">Hide checked fish</div>,
     unchecked: (
-      <div className="location-checkbox unchecked">
-        Hide checked fish
-      </div>
+      <div className="location-checkbox unchecked">Hide checked fish</div>
     )
   }
-]
+];
 
-export { selectGridLocations, selectGridSeasons, selectGridWeather, hideCheckedItems };
+const selectGridBundles = [
+  makeSelectGridItem("River Fish Bundle"),
+  makeSelectGridItem("Lake Fish Bundle"),
+  makeSelectGridItem("Ocean Fish Bundle"),
+  makeSelectGridItem("Night Fishing Bundle"),
+  makeSelectGridItem("Specialty Fish Bundle"),
+  makeSelectGridItem("Field Research Bundle")
+];
+
+export {
+  selectGridLocations,
+  selectGridSeasons,
+  selectGridWeather,
+  hideCheckedItems,
+  selectGridBundles
+};

@@ -5,6 +5,7 @@
 
 .modal-fish-prices,
 .modal-fish-prices td,
+.modal-fish-prices th,
 .modal-fish-prices tr {
   border: 1px solid black;
 }

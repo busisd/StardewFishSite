@@ -4,8 +4,7 @@ import Modal from "../../Util/Modal";
 import StardewFishImage from "./StardewFishImage";
 import StardewFishModalTitle from "./StardewFishModalTitle";
 import StardewFishModalPrices from "./StardewFishModalPrices";
-
-//Fish Name,Price (reg),Price (silver),Price (gold),Price (Irid),Spring,Summer,Fall,Winter,Weather,Location,Time,Difficulty,Bundle
+import StardewFishModalCatchOpportunities from "./StardewFishModalCatchOpportunities";
 
 const StardewFishModal = ({ fishEntry, closeModal, ...rest }) => (
   <Modal onClickBackground={closeModal} {...rest}>
@@ -15,8 +14,14 @@ const StardewFishModal = ({ fishEntry, closeModal, ...rest }) => (
     <br />
     <StardewFishModalPrices fishEntry={fishEntry} />
     <br />
-    {/* {JSON.stringify(fishEntry)}
-    <br /> */}
+    <StardewFishModalCatchOpportunities
+      fishName={fishEntry.name}
+      catchOpportunities={fishEntry.catch_opportunities}
+    />
+    <br />
+    <span>Difficulty: {fishEntry.catch_difficulty}</span>
+    <br /><br />
+    {fishEntry.bundle === "No" ? "" : <><span>Bundle: {fishEntry.bundle}</span><br /><br /></>}
     <button onClick={closeModal}>Close</button>
   </Modal>
 );

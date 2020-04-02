@@ -10,9 +10,10 @@ import {
   selectGridLocations,
   selectGridSeasons,
   selectGridWeather,
-  hideCheckedItems
+  hideCheckedItems,
+  selectGridBundles
 } from "./SelectGridItems";
-import useLocalStorage from "../LocalStorageHook/useLocalStorage";
+import useLocalStorage from "../../LocalStorageHook/useLocalStorage";
 
 function containsTrue(obj) {
   for (let entry of Object.entries(obj)) {
@@ -50,12 +51,20 @@ function checkAllLocations(fishEntry, locationsObj) {
   return false;
 }
 
+function checkAllBundles(fishEntry, bundlesObj) {
+  for (let field of Object.entries(bundlesObj)) {
+    if (field[1] && fishEntry.bundle == field[0]) return true;
+  }
+  return false;
+}
+
 const filterFish = (
   fishEntry,
   fishSearch,
   locationState,
   weatherState,
   seasonState,
+  bundleState,
   checkedFish,
   hideCheckedState
 ) =>
@@ -63,7 +72,8 @@ const filterFish = (
   (!containsTrue(locationState) ||
     checkAllLocations(fishEntry, locationState)) &&
   (!containsTrue(weatherState) || checkAllFields(fishEntry, weatherState)) &&
-  (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState)) && 
+  (!containsTrue(seasonState) || checkAllFields(fishEntry, seasonState)) &&
+  (!containsTrue(bundleState) || checkAllBundles(fishEntry, bundleState)) &&
   (!hideCheckedState.shouldHide || !checkedFish[fishEntry.name]);
 
 const FishSiteContainer = () => {
@@ -71,13 +81,17 @@ const FishSiteContainer = () => {
   const [locationState, setLocationState] = useState({});
   const [weatherState, setWeatherState] = useState({});
   const [seasonState, setSeasonState] = useState({});
+  const [bundleState, setBundleState] = useState({});
   const [checkedFish, setCheckedFish] = useLocalStorage("checkedFish", {});
   const [hideCheckedState, setHideCheckedState] = useState({});
 
   return (
     <div className="three-col-container">
       <div className="three-col-left">
-        <input onChange={e => setFishSearch(e.target.value)} />
+        <input
+          onChange={e => setFishSearch(e.target.value)}
+          placeholder="Search for fish"
+        />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={selectGridLocations}
@@ -98,6 +112,12 @@ const FishSiteContainer = () => {
         />
         <SelectGrid
           style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
+          items={selectGridBundles}
+          selectState={bundleState}
+          setSelectState={setBundleState}
+        />
+        <SelectGrid
+          style={{ "--grid-items-per-row": 5, "--grid-width": "400px" }}
           items={hideCheckedItems}
           selectState={hideCheckedState}
           setSelectState={setHideCheckedState}
@@ -112,6 +132,7 @@ const FishSiteContainer = () => {
               locationState,
               weatherState,
               seasonState,
+              bundleState,
               checkedFish,
               hideCheckedState
             )
@@ -127,7 +148,14 @@ const FishSiteContainer = () => {
         </SquareGrid>
       </div>
       <div className="three-col-right">
-        <span>Use <kbd>ctrl</kbd>+<kbd>click</kbd> to check off a fish</span>
+        <span>Click on a fish to see more information about it</span>
+        <br />
+        <span>Search for fish using the provided filters</span>
+        <br />
+        <br />
+        <span>
+          Use <kbd>ctrl</kbd>+<kbd>click</kbd> to check off a fish
+        </span>
         <br />
         <span>Checked fish will be saved between visits</span>
       </div>
